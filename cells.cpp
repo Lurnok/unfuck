@@ -26,10 +26,12 @@ unsigned char Cells::value(){
     return array[pointer];
 }
 
-void Cells::afficher20(){
+void Cells::afficher20(SrcIterator iter){
+    std::cout << getPointer() << ", " << iter.getCurrentInstruction() << " : | ";
     for(int i = 0; i < 20; i++){
-        std::cout << array[i] << std::endl;
+        std::cout << (int)array[i] << " | ";
     }
+     std::cout << std::endl;
 }
 
 void Cells::goLeft(){
@@ -58,3 +60,6 @@ void Cells::userInput(){
     array[pointer] = x;
 }
 
+int Cells::getPointer(){
+    return pointer;
+}

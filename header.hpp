@@ -1,6 +1,9 @@
 #pragma once
 #include <string>
 
+class Cells;
+class SrcIterator;
+
 class Cells{
 private:
     unsigned char array[30000];
@@ -14,8 +17,9 @@ public:
   void goRight();
   void printValue();
   unsigned char value();
-  void afficher20();
+  void afficher20(SrcIterator iter);
   void userInput();
+  int getPointer();
 };
 
 class SrcIterator{
@@ -33,5 +37,6 @@ public:
   int getRemaining();
   void setRemaining(int val);
   void processInstruction(Cells &cells);
-  void handleLoop(Cells &cells);
+  void handleLoop(Cells &cells, std::string subSrc);
+  std::string getSubString();
 };

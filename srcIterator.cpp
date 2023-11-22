@@ -28,6 +28,7 @@ std::string SrcIterator::getSrc(){
 
 void SrcIterator::setSrc(std::string source){
     src = source;
+    currentInstruction = src[0];
     remaining = src.length();
 }
 
@@ -40,6 +41,7 @@ void SrcIterator::setRemaining(int val){
 }
 
 void SrcIterator::processInstruction(Cells &cells){
+    std::string backup;
     switch(currentInstruction){
             case '+':
                 cells.incrCell();
@@ -60,33 +62,42 @@ void SrcIterator::processInstruction(Cells &cells){
                 cells.userInput();
                 break;
             case '[' :
-                handleLoop(cells);
+                handleLoop(cells,getSubString());
                 break;
             default:
                 break;
         }
 }
 
-void SrcIterator::handleLoop(Cells &cells){
-    consume();
-    //std::cout << src << std::endl;
-    std::string subSrc = "";
-        while(getCurrentInstruction() != ']'){
-            subSrc += getCurrentInstruction();
-            consume();
-        }
-        //std::cout << subSrc << std::endl;
+void SrcIterator::handleLoop(Cells &cells, std::string subSrc){
+        std::string backup;
         if(subSrc.length() > 0){
             SrcIterator subIter(subSrc);
-            //std::cout << "a" << std::endl;
             while(cells.value() != 0){
-               //std::cout << "b" << std::endl;
-                subIter.processInstruction(cells);
-                for(int i = 1; i < subIter.getRemaining(); i++){
-                    subIter.setCurrentInstruction(i);
+                backup = subSrc;
+                subIter.setSrc(backup);
+                while(subIter.getRemaining() > 0){
                     subIter.processInstruction(cells);
+                    subIter.consume();
                 }
-                subIter.setCurrentInstruction(0);
             }
+            processInstruction(cells);
         }
+}
+
+std::string SrcIterator::getSubString(){
+    std::string subSrc = "";
+    int openBracket = 1;
+    int closeBracket = 0;
+    do{
+        consume();
+        if(getCurrentInstruction() == '[')
+            openBracket++;
+        if(getCurrentInstruction() == ']')
+            closeBracket++;
+        if(openBracket != closeBracket || getCurrentInstruction() != ']')
+            subSrc += getCurrentInstruction();
+    }while(openBracket != closeBracket || getCurrentInstruction() != ']');
+    consume();
+    return subSrc;
 }
