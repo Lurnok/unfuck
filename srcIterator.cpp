@@ -2,102 +2,129 @@
 #include <iostream>
 #include <string>
 
-SrcIterator::SrcIterator(std::string source){
+// Constructeur de la classe SrcIterator
+SrcIterator::SrcIterator(std::string source) {
     src = source;
     currentInstruction = src[0];
     remaining = src.length();
 }
 
-void SrcIterator::consume(){
-    src.erase(0,1);
+// Méthode pour consommer l'instruction actuelle
+void SrcIterator::consume() {
+    src.erase(0, 1);
     currentInstruction = src[0];
     remaining--;
 }
 
-char SrcIterator::getCurrentInstruction(){
+// Méthode pour obtenir l'instruction actuelle
+char SrcIterator::getCurrentInstruction() {
     return currentInstruction;
 }
 
-void SrcIterator::setCurrentInstruction(int index){
+// Méthode pour définir l'instruction actuelle à une position donnée dans la source
+void SrcIterator::setCurrentInstruction(int index) {
     currentInstruction = src[index];
 }
 
-std::string SrcIterator::getSrc(){
+// Méthode pour obtenir la source
+std::string SrcIterator::getSrc() {
     return src;
 }
 
-void SrcIterator::setSrc(std::string source){
+// Méthode pour définir la source
+void SrcIterator::setSrc(std::string source) {
     src = source;
     currentInstruction = src[0];
     remaining = src.length();
 }
 
-int SrcIterator::getRemaining(){
+// Méthode pour obtenir le nombre d'instructions restantes
+int SrcIterator::getRemaining() {
     return remaining;
 }
 
-void SrcIterator::setRemaining(int val){
+// Méthode pour définir le nombre d'instructions restantes
+void SrcIterator::setRemaining(int val) {
     remaining = val;
 }
 
-void SrcIterator::processInstruction(Cells &cells){
+// Méthode pour traiter l'instruction actuelle
+void SrcIterator::processInstruction(Cells &cells) {
     std::string backup;
-    switch(currentInstruction){
-            case '+':
-                cells.incrCell();
-                break;
-            case '-':
-                cells.decrCell();
-                break;
-            case '<':
-                cells.goLeft();
-                break;
-            case '>':
-                cells.goRight();
-                break;
-            case '.':
-                cells.printValue();
-                break;
-            case ',':
-                cells.userInput();
-                break;
-            case '[' :
-                handleLoop(cells,getSubString());
-                break;
-            default:
-                break;
-        }
+    
+    // Utilise une instruction switch pour déterminer l'opération à effectuer en fonction de l'instruction actuelle
+    switch (currentInstruction) {
+    case '+':
+        cells.incrCell();  // Incrémente la valeur de la cellule actuelle
+        break;
+    case '-':
+        cells.decrCell();  // Décrémente la valeur de la cellule actuelle
+        break;
+    case '<':
+        cells.goLeft();  // Déplace le pointeur vers la gauche
+        break;
+    case '>':
+        cells.goRight();  // Déplace le pointeur vers la droite
+        break;
+    case '.':
+        cells.printValue();  // Affiche la valeur de la cellule actuelle
+        break;
+    case ',':
+        cells.userInput();  // Obtient une entrée utilisateur et la stocke dans la cellule actuelle
+        break;
+    case '[':
+        handleLoop(cells, getSubString());  // Gère une boucle "[" en utilisant la méthode handleLoop
+        break;
+    default:
+        break;
+    }
 }
 
-void SrcIterator::handleLoop(Cells &cells, std::string subSrc){
-        std::string backup;
-        if(subSrc.length() > 0){
-            SrcIterator subIter(subSrc);
-            while(cells.value() != 0){
-                backup = subSrc;
-                subIter.setSrc(backup);
-                while(subIter.getRemaining() > 0){
-                    subIter.processInstruction(cells);
-                    subIter.consume();
-                }
+
+// Méthode pour gérer une boucle dans le code source
+void SrcIterator::handleLoop(Cells &cells, std::string subSrc) {
+    std::string backup;
+    if (subSrc.length() > 0) {
+        // Crée un nouvel itérateur pour la sous-chaîne du code source à l'intérieur de la boucle
+        SrcIterator subIter(subSrc);
+        
+        // Tant que la valeur de la cellule actuelle est différente de zéro
+        while (cells.value() != 0) {
+            // Sauvegarde la sous-chaîne du code source avant le début de la boucle
+            backup = subSrc;
+            subIter.setSrc(backup);
+            
+            // Itère sur la sous-chaîne et exécute les instructions jusqu'à ce que la cellule actuelle devienne zéro
+            while (subIter.getRemaining() > 0) {
+                subIter.processInstruction(cells);
+                subIter.consume();
             }
-            processInstruction(cells);
         }
+        
+        // Après la fin de la boucle, traite l'instruction suivante dans la source principale
+        processInstruction(cells);
+    }
 }
 
-std::string SrcIterator::getSubString(){
+
+// Méthode pour obtenir une sous-chaîne de la source
+std::string SrcIterator::getSubString() {
     std::string subSrc = "";
     int openBracket = 1;
     int closeBracket = 0;
-    do{
-        consume();
-        if(getCurrentInstruction() == '[')
+    
+    // Tant que le nombre de crochets ouvrants n'est pas égal au nombre de crochets fermants
+    // ou que l'instruction actuelle n'est pas un crochet fermant
+    do {
+        consume();  // Consomme l'instruction actuelle
+        if (getCurrentInstruction() == '[')
             openBracket++;
-        if(getCurrentInstruction() == ']')
+        if (getCurrentInstruction() == ']')
             closeBracket++;
-        if(openBracket != closeBracket || getCurrentInstruction() != ']')
-            subSrc += getCurrentInstruction();
-    }while(openBracket != closeBracket || getCurrentInstruction() != ']');
-    consume();
+        if (openBracket != closeBracket || getCurrentInstruction() != ']')
+            subSrc += getCurrentInstruction();  // Ajoute l'instruction à la sous-chaîne
+    } while (openBracket != closeBracket || getCurrentInstruction() != ']');
+    
+    consume();  // Consomme le crochet fermant
     return subSrc;
 }

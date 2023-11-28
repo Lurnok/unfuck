@@ -1,65 +1,76 @@
 #include "header.hpp"
 #include <iostream>
 
-Cells::Cells(){
-    for(int i = 0; i < 30000; i++){
+// Constructeur de la classe Cells
+Cells::Cells() {
+    // Initialise le tableau avec des zéros et le pointeur à zéro.
+    for (int i = 0; i < 30000; i++) {
         array[i] = 0;
     }
     pointer = 0;
 }
 
-void Cells::incrCell(){
-    if(value() == 255)
+// Méthode pour incrémenter la valeur de la cellule actuelle
+void Cells::incrCell() {
+    if (value() == 255)
         array[pointer] = 0;
     else
         array[pointer]++;
 }
 
-void Cells::decrCell(){
-    if(value() == 0)
+// Méthode pour décrémenter la valeur de la cellule actuelle
+void Cells::decrCell() {
+    if (value() == 0)
         array[pointer] = 255;
     else
         array[pointer]--;
 }
 
-unsigned char Cells::value(){
+// Méthode pour obtenir la valeur de la cellule actuelle
+unsigned char Cells::value() {
     return array[pointer];
 }
 
-void Cells::afficher20(SrcIterator iter){
+// Méthode pour afficher les 20 premières valeurs du tableau et des informations supplémentaires
+void Cells::afficher20(SrcIterator iter) {
     std::cout << getPointer() << ", " << iter.getCurrentInstruction() << " : | ";
-    for(int i = 0; i < 20; i++){
+    for (int i = 0; i < 20; i++) {
         std::cout << (int)array[i] << " | ";
     }
-     std::cout << std::endl;
+    std::cout << std::endl;
 }
 
-void Cells::goLeft(){
-    if(pointer == 0)
+// Méthode pour déplacer le pointeur vers la gauche
+void Cells::goLeft() {
+    if (pointer == 0)
         pointer = 29999;
     else
         pointer--;
 }
 
-void Cells::goRight(){
-    if(pointer == 29999)
+// Méthode pour déplacer le pointeur vers la droite
+void Cells::goRight() {
+    if (pointer == 29999)
         pointer = 0;
     else
         pointer++;
 }
 
-void Cells::printValue(){
+// Méthode pour afficher la valeur de la cellule actuelle
+void Cells::printValue() {
     putchar(value());
 }
 
-void Cells::userInput(){
+// Méthode pour obtenir une entrée utilisateur et la stocker dans la cellule actuelle
+void Cells::userInput() {
     int x = -1;
-    do{
+    do {
         std::cin >> x;
-    } while(x < 0 || x > 255);
+    } while (x < 0 || x > 255);
     array[pointer] = x;
 }
 
-int Cells::getPointer(){
+// Méthode pour obtenir la position actuelle du pointeur
+int Cells::getPointer() {
     return pointer;
 }
