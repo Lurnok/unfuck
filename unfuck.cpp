@@ -32,6 +32,11 @@ int main(int argc, char *argv[]) {
     Cells cells;  // Création d'un objet de la classe Cells.
     SrcIterator iter(src);  // Création d'un objet de la classe SrcIterator avec la chaîne source comme argument.
 
+    if(iter.checkValidity() == 1){
+        std::cerr << "Error : unmatched bracket" << std::endl;
+        return EXIT_FAILURE;
+    }
+
     // Boucle de traitement des instructions à partir de la source.
     while (iter.getRemaining() > 0) {
         iter.processInstruction(cells);  // Appel d'une méthode de la classe SrcIterator pour traiter une instruction.

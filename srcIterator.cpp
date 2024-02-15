@@ -9,6 +9,29 @@ SrcIterator::SrcIterator(std::string source) {
     remaining = src.length();
 }
 
+// Méthode pour vérifier la validité du code source
+int SrcIterator::checkValidity() {
+    int opened = 0, closed = 0;
+    for(int i = 0; i < remaining ; i++){
+        switch(src[i]){
+            case '[':
+                opened++;
+                break;
+            case ']':
+                if(!(opened > closed))
+                    return 1;
+                else
+                    closed++;
+                break;
+            default:
+                break;
+        }
+    }
+    if(opened != closed)
+        return 1;
+    return 0;
+}
+
 // Méthode pour consommer l'instruction actuelle
 void SrcIterator::consume() {
     src.erase(0, 1);

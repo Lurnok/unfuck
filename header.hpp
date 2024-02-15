@@ -34,6 +34,9 @@ public:
     // Constructeur prenant une chaîne source comme argument
     SrcIterator(std::string src);
 
+    // Méthode pour vérifier la validité du code source
+    int checkValidity();
+
     // Méthode pour consommer l'instruction actuelle
     void consume();
 
